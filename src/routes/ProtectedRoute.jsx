@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { useAuthContext } from '../auth/AuthContext';
+import PlatformLoader from '../components/common/PlatformLoader';
 
 export default function ProtectedRoute({ children }) {
   const { isAuthenticated, loading, profile, role } = useAuthContext();
@@ -46,11 +47,7 @@ export default function ProtectedRoute({ children }) {
   }, [isAuthenticated, isAdmin, onChangePassword, location.pathname]);
 
   if (loading || (isAuthenticated && isAdmin && !onChangePassword && mfaState.checking)) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background-light">
-        <p className="text-text-secondary">Loading...</p>
-      </div>
-    );
+    return <PlatformLoader visible event="session" />;
   }
 
   if (!isAuthenticated) {

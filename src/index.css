@@ -132,3 +132,10 @@
 .patient-marker-pulse .patient-marker.leaflet-div-icon {
   animation: patient-pulse 2s ease-in-out infinite;
 }
+
+@keyframes platform-loader-spin {
+  to { transform: rotate(360deg); }
+}
+.platform-loader-ring {
+  animation: platform-loader-spin 0.85s linear infinite;
+}

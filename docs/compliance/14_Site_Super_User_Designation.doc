@@ -1,0 +1,38 @@
+{\rtf1\ansi\deff0
+{\fonttbl{\f0 Calibri;}}
+\fs22
+\b St. Dominic Care\b0\par
+\b 14. Site Super User designation\b0\par
+\par
+This form names the people who own day-to-day use of the St. Dominic Care system at this site. It is not valid until both names are written in by site leadership and the form is signed. No Super User is named in the software repository.\par
+\par
+\b Site\b0\par
+St. Dominic Care\par
+\par
+\b Primary Super User\b0\par
+Name: ________________________________\par
+Role / department: ________________________________\par
+Contact: ________________________________\par
+\par
+\b Backup Super User\b0\par
+Name: ________________________________\par
+Role / department: ________________________________\par
+Contact: ________________________________\par
+Acts when the primary Super User is absent, on leave, or unreachable.\par
+\par
+\b Escalation path\b0\par
+1. Staff member reports the problem to the shift or department lead.\par
+2. Department lead contacts the Primary Super User.\par
+3. If the Primary Super User is unavailable, contact the Backup Super User.\par
+4. Access, role, or account problems go to an Administrator (Admin role; authenticator required at /admin/security).\par
+5. Medical-record or audit questions go to the Records Officer who owns the audit trail.\par
+6. If the system is down or data may have been exposed, the Super User notifies the Administrator and site leadership the same day. Do not wait for the next business day.\par
+\par
+\b Duties\b0\par
+The Super User is the first contact for how to use the system, password resets that need an admin, and reporting outages. The Super User does not replace clinical judgment or the Records Officer's audit review.\par
+\par
+\b Sign-off\b0\par
+Designated by: ________________________________  Date: ______________\par
+Primary Super User signature: ________________________________\par
+Backup Super User signature: ________________________________\par
+}

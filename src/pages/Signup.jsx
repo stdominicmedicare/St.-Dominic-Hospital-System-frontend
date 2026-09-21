@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Building2, Phone, Calendar } from 'lucide-react';
 import { supabase } from '../services/supabase';
 import { Button, Input, Card } from '../components/common';
+import { usePlatformLoader } from '../context/LoaderContext';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -20,6 +21,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const { showLoader, hideLoader } = usePlatformLoader();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,6 +31,7 @@ export default function Signup() {
       return;
     }
     setLoading(true);
+    showLoader('signup');
     try {
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
@@ -54,6 +57,7 @@ export default function Signup() {
         navigate('/patient');
       }
     } finally {
+      hideLoader();
       setLoading(false);
     }
   };

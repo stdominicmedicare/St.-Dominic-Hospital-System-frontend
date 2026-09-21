@@ -8,6 +8,7 @@ import { supabase } from '../services/supabase';
 import { useAuthContext } from '../auth/AuthContext';
 import { ROLE_ROUTES } from '../utils/constants';
 import { Button, Input, Card } from '../components/common';
+import { usePlatformLoader } from '../context/LoaderContext';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -17,6 +18,7 @@ export default function Login() {
   const [pendingRedirect, setPendingRedirect] = useState(false);
   const [localError, setLocalError] = useState('');
   const { signIn, profile, user, loading, error: authError, refreshProfile } = useAuthContext();
+  const { showLoader, hideLoader } = usePlatformLoader();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -70,39 +72,42 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLocalError('');
-    const { error, data } = await signIn(email, password);
-    if (error) return;
-
-    // After password auth, Admin must enroll MFA or complete AAL2 challenge
+    showLoader('login');
     try {
-      await refreshProfile();
-      const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-      const factors = await supabase.auth.mfa.listFactors();
-      const totp = factors.data?.totp?.filter((f) => f.status === 'verified') || [];
+      const { error, data } = await signIn(email, password);
+      if (error) return;
 
-      // Peek role from session user metadata / re-fetch via /auth/me is already in refreshProfile
-      // Use profile after a tick — refreshProfile updates context asynchronously; read factors first
-      if (aal?.currentLevel === 'aal1' && totp.length > 0) {
-        setMfaFactorId(totp[0].id);
-        return;
+      // After password auth, Admin must enroll MFA or complete AAL2 challenge
+      try {
+        await refreshProfile();
+        const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+        const factors = await supabase.auth.mfa.listFactors();
+        const totp = factors.data?.totp?.filter((f) => f.status === 'verified') || [];
+
+        if (aal?.currentLevel === 'aal1' && totp.length > 0) {
+          setMfaFactorId(totp[0].id);
+          return;
+        }
+
+        if (totp.length === 0) {
+          setPendingRedirect(true);
+          return;
+        }
+      } catch {
+        /* MFA not enabled in project — continue */
       }
 
-      if (totp.length === 0) {
-        // If this account is Admin, force enrollment page after profile loads
-        setPendingRedirect(true);
-        return;
-      }
-    } catch {
-      /* MFA not enabled in project — continue */
+      void data;
+      setPendingRedirect(true);
+    } finally {
+      hideLoader();
     }
-
-    void data;
-    setPendingRedirect(true);
   };
 
   const handleMfa = async (e) => {
     e.preventDefault();
     setLocalError('');
+    showLoader('login', { title: 'Verifying code', message: 'Checking your authenticator…' });
     try {
       const challenge = await supabase.auth.mfa.challenge({ factorId: mfaFactorId });
       if (challenge.error) throw challenge.error;
@@ -117,6 +122,8 @@ export default function Login() {
       setPendingRedirect(true);
     } catch (err) {
       setLocalError(err.message || 'Invalid verification code');
+    } finally {
+      hideLoader();
     }
   };
 

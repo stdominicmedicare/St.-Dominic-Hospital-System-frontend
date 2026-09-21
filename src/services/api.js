@@ -5,7 +5,18 @@
  */
 import { supabase } from './supabase';
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api').replace(/\/api\/?$/, '');
+const PRODUCTION_API = 'https://st-dominic-hospital-system-backend.vercel.app';
+
+function resolveApiBase() {
+  const configured = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api').replace(/\/api\/?$/, '');
+  // A frontend origin here makes /api/* hit the SPA (HTML), which is not JSON.
+  if (typeof window !== 'undefined' && configured === window.location.origin) {
+    return PRODUCTION_API;
+  }
+  return configured;
+}
+
+const API_BASE = resolveApiBase();
 
 async function getAuthHeaders() {
   const { data: { session } } = await supabase.auth.getSession();
@@ -27,11 +38,19 @@ export async function apiGet(path, options = {}) {
     headers,
     credentials: 'include',
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || res.statusText);
+  const body = await res.text();
+  let data = null;
+  try {
+    data = body ? JSON.parse(body) : null;
+  } catch {
+    throw new Error(
+      `API returned HTML instead of JSON (${res.status}). Check VITE_API_BASE_URL — it must be the backend, not this site.`
+    );
   }
-  return res.json();
+  if (!res.ok) {
+    throw new Error(data?.error || res.statusText);
+  }
+  return data;
 }
 
 export async function apiPost(path, body) {

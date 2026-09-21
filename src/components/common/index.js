@@ -6,3 +6,4 @@ export { default as Modal } from './Modal';
 export { default as Table, TableHead, TableBody, TableRow, Th, Td } from './Table';
 export { default as Select } from './Select';
 export { default as Toast } from './Toast';
+export { default as PlatformLoader, LOADER_EVENTS } from './PlatformLoader';
