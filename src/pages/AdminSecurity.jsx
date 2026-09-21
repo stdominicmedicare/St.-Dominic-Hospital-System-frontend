@@ -9,10 +9,13 @@ import { supabase } from '../services/supabase';
 import { useAuthContext } from '../auth/AuthContext';
 import { Button, Input, Card } from '../components/common';
 
+const MFA_FRIENDLY_NAME = 'St. Dominic Care Admin';
+
 export default function AdminSecurity() {
   const { role, refreshProfile } = useAuthContext();
   const navigate = useNavigate();
   const [factors, setFactors] = useState([]);
+  const [unverifiedFactors, setUnverifiedFactors] = useState([]);
   const [enroll, setEnroll] = useState(null);
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
@@ -25,7 +28,12 @@ export default function AdminSecurity() {
     try {
       const { data, error: e } = await supabase.auth.mfa.listFactors();
       if (e) throw e;
-      setFactors(data?.totp || []);
+      const verified = data?.totp || [];
+      const unverified = (data?.all || []).filter(
+        (f) => f.factor_type === 'totp' && f.status === 'unverified'
+      );
+      setFactors(verified);
+      setUnverifiedFactors(unverified);
     } catch (err) {
       setError(err.message || 'Could not load MFA factors. Enable MFA in Supabase Auth settings.');
     } finally {
@@ -37,15 +45,54 @@ export default function AdminSecurity() {
     loadFactors();
   }, []);
 
+  const removeFactor = async (factorId) => {
+    const { error: e } = await supabase.auth.mfa.unenroll({ factorId });
+    if (e) throw e;
+  };
+
+  const clearIncompleteEnrollments = async () => {
+    for (const f of unverifiedFactors) {
+      await removeFactor(f.id);
+    }
+    setUnverifiedFactors([]);
+  };
+
   const startEnroll = async () => {
     setError('');
     setMessage('');
     try {
+      // Leftover unverified factors block re-enroll with the same friendly name
+      if (unverifiedFactors.length > 0) {
+        await clearIncompleteEnrollments();
+      }
+
       const { data, error: e } = await supabase.auth.mfa.enroll({
         factorType: 'totp',
-        friendlyName: 'St. Dominic Care Admin',
+        friendlyName: MFA_FRIENDLY_NAME,
       });
-      if (e) throw e;
+      if (e) {
+        // If name still conflicts, strip matching leftovers and retry once
+        if (/friendly name/i.test(e.message || '')) {
+          const listed = await supabase.auth.mfa.listFactors();
+          const leftovers = (listed.data?.all || []).filter(
+            (f) =>
+              f.factor_type === 'totp' &&
+              f.status === 'unverified' &&
+              (f.friendly_name === MFA_FRIENDLY_NAME || !f.friendly_name)
+          );
+          for (const f of leftovers) {
+            await removeFactor(f.id);
+          }
+          const retry = await supabase.auth.mfa.enroll({
+            factorType: 'totp',
+            friendlyName: MFA_FRIENDLY_NAME,
+          });
+          if (retry.error) throw retry.error;
+          setEnroll(retry.data);
+          return;
+        }
+        throw e;
+      }
       setEnroll(data);
     } catch (err) {
       setError(err.message || 'Enrollment failed');
@@ -84,12 +131,22 @@ export default function AdminSecurity() {
       return;
     }
     try {
-      const { error: e } = await supabase.auth.mfa.unenroll({ factorId });
-      if (e) throw e;
+      await removeFactor(factorId);
       setMessage('Authenticator removed.');
       await loadFactors();
     } catch (err) {
       setError(err.message || 'Could not remove factor');
+    }
+  };
+
+  const discardIncomplete = async () => {
+    setError('');
+    try {
+      await clearIncompleteEnrollments();
+      setMessage('Incomplete authenticator setup was removed. You can set up MFA again.');
+      await loadFactors();
+    } catch (err) {
+      setError(err.message || 'Could not clear incomplete setup');
     }
   };
 
@@ -119,18 +176,37 @@ export default function AdminSecurity() {
         {loading ? (
           <p className="text-sm text-text-muted">Loading…</p>
         ) : factors.length === 0 ? (
-          <p className="text-sm text-amber-700">MFA is not enrolled yet. Enroll an authenticator to secure this admin account.</p>
+          <p className="text-sm text-amber-700">
+            MFA is not enrolled yet. Enroll an authenticator to secure this admin account.
+          </p>
         ) : (
           <ul className="space-y-2">
             {factors.map((f) => (
               <li key={f.id} className="flex items-center justify-between text-sm">
-                <span>{f.friendly_name || 'Authenticator'} ({f.status})</span>
+                <span>
+                  {f.friendly_name || 'Authenticator'} ({f.status})
+                </span>
                 <Button type="button" variant="outline" onClick={() => unenroll(f.id)}>
                   Remove
                 </Button>
               </li>
             ))}
           </ul>
+        )}
+
+        {unverifiedFactors.length > 0 && !enroll && (
+          <div className="rounded-button border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+            <p>
+              An incomplete authenticator setup already exists
+              {unverifiedFactors[0]?.friendly_name
+                ? ` (“${unverifiedFactors[0].friendly_name}”)`
+                : ''}
+              . Remove it, then set up MFA again.
+            </p>
+            <Button type="button" variant="outline" className="mt-2" onClick={discardIncomplete}>
+              Clear incomplete setup
+            </Button>
+          </div>
         )}
 
         {!enroll && factors.length === 0 && (
@@ -143,7 +219,8 @@ export default function AdminSecurity() {
         {enroll && (
           <form onSubmit={verifyEnroll} className="space-y-3 border-t border-border pt-4">
             <p className="text-sm text-text-secondary">
-              Scan this QR code in Google Authenticator, Authy, or 1Password, then enter the 6-digit code.
+              Scan this QR code in Google Authenticator, Authy, or 1Password, then enter the 6-digit
+              code.
             </p>
             {enroll.totp?.qr_code && (
               <img
