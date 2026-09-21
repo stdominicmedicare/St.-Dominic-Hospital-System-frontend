@@ -381,7 +381,6 @@ export default function DoctorManagement() {
             type="password"
             value={createForm.password}
             onChange={(e) => setCreateForm((f) => ({ ...f, password: e.target.value }))}
-            placeholder="Min 6 characters"
             required
             minLength={10}
             placeholder={PASSWORD_HINT}
