@@ -98,12 +98,12 @@ export default function Header({ onMenuClick }) {
                   <span className="hidden sm:inline">{portalTitle}</span>
                 </span>
                 <span className="hidden truncate text-xs leading-tight text-white/80 xs:block">
-                  MEMON COMMUNITY HOSPITAL
+                  St. Dominic Care
                 </span>
               </>
             ) : (
               <span className="truncate font-semibold text-white max-w-[50vw] sm:max-w-none">
-                MEMON COMMUNITY HOSPITAL
+                St. Dominic Care
               </span>
             )}
           </span>

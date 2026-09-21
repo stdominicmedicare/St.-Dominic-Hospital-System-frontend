@@ -84,7 +84,7 @@ export default function DoctorDashboard() {
   const [ambulanceForm, setAmbulanceForm] = useState({
     patient_id: '',
     from_address: '',
-    to_address: 'Memon Community Hospital',
+    to_address: 'St. Dominic Care',
     priority: 'High',
   });
 
@@ -201,7 +201,7 @@ export default function DoctorDashboard() {
       setAmbulanceForm({
         patient_id: '',
         from_address: '',
-        to_address: 'Memon Community Hospital',
+        to_address: 'St. Dominic Care',
         priority: 'High',
       });
     } catch (err) {

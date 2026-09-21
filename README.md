@@ -1,6 +1,6 @@
-# MEMON COMMUNITY HOSPITAL – Frontend (React PWA)
+# St. Dominic Care – Frontend (React PWA)
 
-Role-based React PWA for the MEMON COMMUNITY HOSPITAL.
+Role-based React PWA for St. Dominic Care.
 
 ## Tech Stack
 
@@ -77,6 +77,6 @@ Installability follows [web.dev install criteria](https://web.dev/articles/insta
 - **Manifest:** `name`/`short_name`, `start_url`, `display: standalone`, **icons 192px and 512px (PNG)**.
 - **HTTPS** (ngrok provides this).
 - **Service worker** registered via `virtual:pwa-register` in `main.jsx`.
-- **User engagement:** Chrome may show the prompt after ~1 click and ~30s on the page; the in-app “Install HMS app” button uses `beforeinstallprompt` when available.
+- **User engagement:** Chrome may show the prompt after ~1 click and ~30s on the page; the in-app “Install St. Dominic Care” button uses `beforeinstallprompt` when available.
 
 PNG icons (including **apple-touch-icon** for iOS “Add to Home Screen”) are generated with `npm run generate-pwa-icons` (runs on `npm run build`). See [docs/PWA-CHECKLIST.md](docs/PWA-CHECKLIST.md) for the official PWA checklist. Next.js vs Vite: [docs/NEXTJS-VS-VITE.md](docs/NEXTJS-VS-VITE.md).

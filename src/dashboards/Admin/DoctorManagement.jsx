@@ -373,7 +373,7 @@ export default function DoctorManagement() {
             type="email"
             value={createForm.email}
             onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
-            placeholder="doctor@hospital.com"
+            placeholder="doctor@stdominiccare.com"
             required
           />
           <Input
@@ -475,7 +475,7 @@ export default function DoctorManagement() {
               type="email"
               value={editForm.email}
               onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
-              placeholder="doctor@hospital.com"
+              placeholder="doctor@stdominiccare.com"
             />
             <Input
               label="Contact Number"

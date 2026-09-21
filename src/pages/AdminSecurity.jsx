@@ -43,7 +43,7 @@ export default function AdminSecurity() {
     try {
       const { data, error: e } = await supabase.auth.mfa.enroll({
         factorType: 'totp',
-        friendlyName: 'Memon HMS Admin',
+        friendlyName: 'St. Dominic Care Admin',
       });
       if (e) throw e;
       setEnroll(data);

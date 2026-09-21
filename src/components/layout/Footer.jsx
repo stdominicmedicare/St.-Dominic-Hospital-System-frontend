@@ -21,7 +21,7 @@ export default function Footer() {
               <Users className="h-5 w-5 text-white" />
               <h3 className="font-semibold text-white">Admin Portal</h3>
             </div>
-            <p className="mt-2 text-sm font-medium text-white/90">Hospital Management</p>
+            <p className="mt-2 text-sm font-medium text-white/90">St. Dominic Care</p>
             <p className="mt-1 text-sm text-white/80">
               Comprehensive system management dashboard for healthcare facilities.
             </p>
@@ -96,7 +96,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 shrink-0" />
-                admin@hospital.com
+                admin@stdominiccare.com
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 shrink-0" />
@@ -107,8 +107,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-8 flex flex-col items-center justify-between gap-2 border-t border-white/10 pt-6 text-sm text-white/70 sm:flex-row">
-          <span>© {new Date().getFullYear()} MEMON COMMUNITY HOSPITAL. All rights reserved.</span>
-          <span>Powered by HMS</span>
+          <span>© {new Date().getFullYear()} St. Dominic Care. All rights reserved.</span>
         </div>
       </div>
     </footer>

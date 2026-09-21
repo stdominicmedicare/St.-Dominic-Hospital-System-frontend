@@ -172,7 +172,7 @@ export default function Login() {
             <Building2 className="h-10 w-10" />
           </div>
           <h1 className="text-xl font-bold text-text-primary sm:text-2xl">
-            MEMON COMMUNITY HOSPITAL
+            St. Dominic Care
           </h1>
           <p className="text-sm text-text-secondary mt-1">
             Sign in to access your dashboard
@@ -183,7 +183,7 @@ export default function Login() {
           <Input
             label="Email Address"
             type="email"
-            placeholder="admin@hospital.com"
+            placeholder="admin@stdominiccare.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             leftIcon={<Mail className="h-5 w-5 text-text-muted" />}

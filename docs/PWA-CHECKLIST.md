@@ -34,7 +34,7 @@ This checklist is based on [web.dev](https://web.dev) and [Chrome PWA](https://d
 
 - `link rel="manifest" href="/manifest.webmanifest"`
 - `link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"`
-- `meta name="apple-mobile-web-app-title" content="HMS"`
+- `meta name="apple-mobile-web-app-title" content="St. Dominic"`
 - `meta name="theme-color" content="..."`
 - Favicon links (e.g. `/favicon-96x96.png`, `/favicon.svg`).
 
@@ -50,8 +50,8 @@ This checklist is based on [web.dev](https://web.dev) and [Chrome PWA](https://d
 ## 5. How to test “like an app” / Add to Home Screen
 
 1. **HTTPS** – Use HTTPS (e.g. ngrok or production). HTTP often blocks install / home screen.
-2. **Chrome (desktop):** Install via address bar icon or menu → “Install MEMON COMMUNITY HOSPITAL”. App opens in its own window; icon in taskbar/dock.
+2. **Chrome (desktop):** Install via address bar icon or menu → “Install St. Dominic Care”. App opens in its own window; icon in taskbar/dock.
 3. **Chrome (Android):** Menu → “Add to Home screen” or “Install app”. Icon and name come from manifest + apple-touch-icon.
 4. **iOS Safari:** Share → “Add to Home Screen”. Icon comes from **apple-touch-icon** (180×180 in `public/`).
 
-After generating icons and deploying over HTTPS, you should see the HMS icon and app-like window when installed or added to home screen.
+After generating icons and deploying over HTTPS, you should see the St. Dominic Care icon and app-like window when installed or added to home screen.

@@ -51,7 +51,7 @@ export default function AuditLogs() {
         </p>
         <p className="mt-2 text-sm text-text-muted">
           Compliance: Records Officers and Administrators should review this log regularly.
-          Assign ownership at St. Dominic / Memon Community Hospital for ongoing review.
+          Assign ownership at St. Dominic Care for ongoing review.
         </p>
       </div>
 

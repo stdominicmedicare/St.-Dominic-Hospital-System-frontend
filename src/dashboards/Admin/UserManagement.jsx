@@ -397,7 +397,7 @@ export default function UserManagement() {
             type="email"
             value={createForm.email}
             onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
-            placeholder="staff@hospital.com"
+            placeholder="staff@stdominiccare.com"
             required
           />
           <Input

@@ -158,7 +158,7 @@ export default function Signup() {
               required
             />
             <span>
-              I consent to St. Dominic / Memon HMS storing my personal and health-related
+              I consent to St. Dominic Care storing my personal and health-related
               information for care delivery, appointments, and hospital records, in line with
               applicable data-protection requirements.
             </span>

@@ -1,4 +1,4 @@
-# Next.js vs Vite (React) – Recommendation for HMS
+# Next.js vs Vite (React) – Recommendation for St. Dominic Care
 
 ## Your setup today
 
@@ -25,7 +25,7 @@
 
 **When it’s a good fit**
 
-- HMS stays a **logged-in, role-based app** (Admin, Doctor, Patient, etc.).
+- St. Dominic Care stays a **logged-in, role-based app** (Admin, Doctor, Patient, etc.).
 - You don’t need public, SEO-heavy marketing pages or server-rendered landing pages.
 - You want to ship and refine features quickly.
 

@@ -16,9 +16,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       manifestFilename: 'manifest.webmanifest',
       manifest: {
-        name: 'MEMON COMMUNITY HOSPITAL',
-        short_name: 'HMS',
-        description: 'Role-based MEMON COMMUNITY HOSPITAL (PWA)',
+        name: 'St. Dominic Care',
+        short_name: 'St. Dominic',
+        description: 'Role-based St. Dominic Care (PWA)',
         start_url: '/',
         display: 'standalone',
         background_color: '#ffffff',
