@@ -21,7 +21,6 @@ import { BloodBankDashboard } from './dashboards/BloodBank';
 import { VolunteerDashboard } from './dashboards/Volunteer';
 import StaffPortal from './dashboards/Staff/StaffPortal';
 import ChangePassword from './pages/ChangePassword';
-import AdminSecurity from './pages/AdminSecurity';
 import TestMap from './components/map/TestMap';
 
 function GeneralUserShell() {
@@ -225,19 +224,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/admin/security"
-            element={
-              <ProtectedRoute>
-                <RoleGuard allowedRoles={['Admin']}>
-                  <AppLayout>
-                    <AdminSecurity />
-                  </AppLayout>
-                </RoleGuard>
-              </ProtectedRoute>
-            }
-          />
-
           <Route
             path="/staff"
             element={

@@ -152,9 +152,6 @@ export default function Header({ onMenuClick }) {
             <NavLink to="/admin/audit-logs" className={navLinkClass}>
               Audit Trail
             </NavLink>
-            <NavLink to="/admin/security" className={navLinkClass}>
-              Security (2FA)
-            </NavLink>
           </>
         )}
         {role === 'RecordsOfficer' && (
