@@ -21,6 +21,9 @@ import { BloodBankDashboard } from './dashboards/BloodBank';
 import { VolunteerDashboard } from './dashboards/Volunteer';
 import StaffPortal from './dashboards/Staff/StaffPortal';
 import ChangePassword from './pages/ChangePassword';
+// MFA / 2FA disabled for now (client request). Re-enable: uncomment import + /admin/security route below.
+// import AdminSecurity from './pages/AdminSecurity';
+// Or restore from: src/pages/_mfa_disabled/AdminSecurity.jsx
 import TestMap from './components/map/TestMap';
 
 function GeneralUserShell() {
@@ -224,6 +227,20 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          {/* MFA / 2FA disabled for now (client request). Uncomment to restore Admin authenticator setup.
+          <Route
+            path="/admin/security"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowedRoles={['Admin']}>
+                  <AppLayout>
+                    <AdminSecurity />
+                  </AppLayout>
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
+          */}
           <Route
             path="/staff"
             element={

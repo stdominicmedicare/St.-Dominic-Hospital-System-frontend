@@ -20,6 +20,7 @@ const adminLinks = [
   { to: '/admin/volunteers', label: 'Volunteers', icon: Heart },
   { to: '/admin/roles', label: 'Role Assignment', icon: Shield },
   { to: '/admin/audit-logs', label: 'Audit Trail', icon: ScrollText },
+  // MFA / 2FA disabled: { to: '/admin/security', label: 'Security (2FA)', icon: ShieldCheck },
 ];
 
 const patientLinks = [{ to: '/patient', label: 'Dashboard', icon: LayoutDashboard }];

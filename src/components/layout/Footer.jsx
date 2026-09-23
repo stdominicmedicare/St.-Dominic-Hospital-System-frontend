@@ -67,6 +67,13 @@ export default function Footer() {
                       Audit Trail
                     </Link>
                   </li>
+                  {/* MFA / 2FA disabled:
+                  <li>
+                    <Link to="/admin/security" className="text-sm text-white/80 hover:text-white">
+                      Security (2FA)
+                    </Link>
+                  </li>
+                  */}
                 </>
               )}
             </ul>

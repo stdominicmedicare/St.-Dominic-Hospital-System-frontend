@@ -24,7 +24,7 @@ Acts when the primary Super User is absent, on leave, or unreachable.\par
 1. Staff member reports the problem to the shift or department lead.\par
 2. Department lead contacts the Primary Super User.\par
 3. If the Primary Super User is unavailable, contact the Backup Super User.\par
-4. Access, role, or account problems go to an Administrator (Admin role; authenticator required at /admin/security).\par
+4. Access, role, or account problems go to an Administrator (Admin role).\par
 5. Medical-record or audit questions go to the Records Officer who owns the audit trail.\par
 6. If the system is down or data may have been exposed, the Super User notifies the Administrator and site leadership the same day. Do not wait for the next business day.\par
 \par

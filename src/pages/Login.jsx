@@ -1,5 +1,9 @@
 /**
  * Login page – email/password sign-in with role-based redirect.
+ *
+ * MFA / 2FA disabled for now (client request).
+ * Previous Admin MFA challenge (TOTP / AAL2) is archived at:
+ *   src/pages/_mfa_disabled/Login.withMfa.jsx
  */
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, useLocation, Link } from 'react-router-dom';
@@ -12,6 +16,8 @@ import { usePlatformLoader } from '../context/LoaderContext';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  // MFA disabled: const [mfaCode, setMfaCode] = useState('');
+  // MFA disabled: const [mfaFactorId, setMfaFactorId] = useState(null);
   const [pendingRedirect, setPendingRedirect] = useState(false);
   const [localError, setLocalError] = useState('');
   const { signIn, profile, user, loading, error: authError, refreshProfile } = useAuthContext();
@@ -31,6 +37,7 @@ export default function Login() {
       return;
     }
 
+    // MFA disabled: previously Admins were redirected to /admin/security until TOTP enrolled (AAL2).
     const path =
       profile?.role && ROLE_ROUTES[profile.role] ? ROLE_ROUTES[profile.role] : redirect;
     setPendingRedirect(false);
@@ -45,11 +52,14 @@ export default function Login() {
       const { error } = await signIn(email, password);
       if (error) return;
       await refreshProfile();
+      // MFA disabled: previously challenged verified TOTP factors or forced /admin/security enrollment.
       setPendingRedirect(true);
     } finally {
       hideLoader();
     }
   };
+
+  /* MFA / 2FA UI disabled — see src/pages/_mfa_disabled/Login.withMfa.jsx for handleMfa + TOTP form. */
 
   return (
     <div
