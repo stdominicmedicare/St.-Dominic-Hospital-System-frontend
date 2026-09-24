@@ -4,11 +4,12 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../../auth/AuthContext';
 import { ROLE_LABELS } from '../../utils/constants';
-import { LayoutDashboard, Users, Shield, Stethoscope, Ambulance, Bed, FileText, Activity, History, Pill, Droplets, MapPin, Heart, ScrollText, ShieldCheck, FolderOpen, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Users, Shield, Stethoscope, Ambulance, Bed, FileText, Activity, History, Pill, Droplets, MapPin, Heart, ScrollText, FolderOpen, BarChart3, ClipboardList, Baby, FlaskConical, Wallet, Syringe } from 'lucide-react';
 
 const adminLinks = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/admin/patients', label: 'Patient Records', icon: FolderOpen },
+  { to: '/opd', label: 'OPD Desk', icon: ClipboardList },
   { to: '/admin/reports', label: 'Reports & Export', icon: BarChart3 },
   { to: '/admin/users', label: 'User Management', icon: Users },
   { to: '/admin/doctors', label: 'Doctor Management', icon: Stethoscope },
@@ -18,14 +19,20 @@ const adminLinks = [
   { to: '/admin/pharmacy', label: 'Pharmacy', icon: Pill },
   { to: '/admin/bloodbank', label: 'Blood Bank', icon: Droplets },
   { to: '/admin/volunteers', label: 'Volunteers', icon: Heart },
+  { to: '/midwife', label: 'MCH / Midwife', icon: Baby },
+  { to: '/lab', label: 'Laboratory', icon: FlaskConical },
+  { to: '/accounts', label: 'Accounts', icon: Wallet },
+  { to: '/programs', label: 'Programs', icon: Syringe },
   { to: '/admin/roles', label: 'Role Assignment', icon: Shield },
   { to: '/admin/audit-logs', label: 'Audit Trail', icon: ScrollText },
-  { to: '/admin/security', label: 'Security (2FA)', icon: ShieldCheck },
 ];
 
 const patientLinks = [{ to: '/patient', label: 'Dashboard', icon: LayoutDashboard }];
 const doctorLinks = [
   { to: '/doctor', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/opd', label: 'OPD Queue', icon: ClipboardList },
+  { to: '/lab', label: 'Lab Orders', icon: FlaskConical },
+  { to: '/programs', label: 'Programs', icon: Syringe },
   { to: '/admin/patients', label: 'Patient Records', icon: FolderOpen },
   { to: '/admin/reports', label: 'Reports', icon: BarChart3 },
 ];
@@ -43,13 +50,32 @@ const bloodBankLinks = [{ to: '/bloodbank', label: 'Dashboard', icon: Droplets }
 const volunteerLinks = [{ to: '/volunteer', label: 'Dashboard', icon: Droplets }];
 const generalUserLinks = [{ to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }];
 const staffLinks = [
-  { to: '/admin/patients', label: 'Patient Records', icon: FolderOpen },
   { to: '/staff', label: 'Staff Home', icon: LayoutDashboard },
+  { to: '/opd', label: 'OPD Desk', icon: ClipboardList },
+  { to: '/admin/patients', label: 'Patient Records', icon: FolderOpen },
+  { to: '/programs', label: 'Programs', icon: Syringe },
+  { to: '/lab', label: 'Laboratory', icon: FlaskConical },
 ];
 const recordsOfficerLinks = [
   { to: '/admin/patients', label: 'Patient Records', icon: FolderOpen },
   { to: '/admin/reports', label: 'Reports & Export', icon: BarChart3 },
   { to: '/admin/audit-logs', label: 'Audit Trail', icon: ScrollText },
+];
+const midwifeLinks = [
+  { to: '/midwife', label: 'MCH Home', icon: Baby },
+  { to: '/opd', label: 'OPD', icon: ClipboardList },
+  { to: '/programs', label: 'Programs', icon: Syringe },
+  { to: '/admin/patients', label: 'Patients', icon: FolderOpen },
+  { to: '/admin/reports', label: 'Reports', icon: BarChart3 },
+];
+const labLinks = [
+  { to: '/lab', label: 'Lab Worklist', icon: FlaskConical },
+  { to: '/admin/patients', label: 'Patients', icon: FolderOpen },
+];
+const accountsLinks = [
+  { to: '/accounts', label: 'Billing', icon: Wallet },
+  { to: '/admin/patients', label: 'Patients', icon: FolderOpen },
+  { to: '/admin/reports', label: 'Reports', icon: BarChart3 },
 ];
 
 function getLinksForRole(role) {
@@ -65,6 +91,9 @@ function getLinksForRole(role) {
   if (r === 'GeneralUser') return generalUserLinks;
   if (r === 'Nurse' || r === 'Receptionist') return staffLinks;
   if (r === 'RecordsOfficer') return recordsOfficerLinks;
+  if (r === 'Midwife') return midwifeLinks;
+  if (r === 'Laboratory') return labLinks;
+  if (r === 'Accounts') return accountsLinks;
   return [{ to: '/dashboard', label: 'Home', icon: LayoutDashboard }];
 }
 

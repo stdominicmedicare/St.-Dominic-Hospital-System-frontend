@@ -22,6 +22,10 @@ function getPortalTitle(role, pathname) {
   if (role === 'Pharmacy') return 'Pharmacy Management Panel';
   if (role === 'BloodBank' || role === 'Blood Bank') return 'Blood Bank Management Dashboard';
   if (role === 'Volunteer') return 'Blood Donation Volunteer';
+  if (role === 'Midwife') return 'Midwife / MCH';
+  if (role === 'Laboratory') return 'Laboratory';
+  if (role === 'Accounts') return 'Accounts / Billing';
+  if (role === 'Nurse' || role === 'Receptionist') return 'Clinical Staff';
   return null;
 }
 
@@ -151,9 +155,6 @@ export default function Header({ onMenuClick }) {
             </NavLink>
             <NavLink to="/admin/audit-logs" className={navLinkClass}>
               Audit Trail
-            </NavLink>
-            <NavLink to="/admin/security" className={navLinkClass}>
-              Security (2FA)
             </NavLink>
           </>
         )}

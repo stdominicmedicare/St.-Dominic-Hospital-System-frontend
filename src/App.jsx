@@ -19,8 +19,12 @@ import { PharmacyDashboard } from './dashboards/Pharmacy';
 import { BloodBankDashboard } from './dashboards/BloodBank';
 import { VolunteerDashboard } from './dashboards/Volunteer';
 import StaffPortal from './dashboards/Staff/StaffPortal';
+import OpdDesk from './dashboards/Opd/OpdDesk';
+import AccountsDashboard from './dashboards/Accounts/AccountsDashboard';
+import MidwifeDashboard from './dashboards/Midwife/MidwifeDashboard';
+import LabDashboard from './dashboards/Lab/LabDashboard';
+import ProgramsDashboard from './dashboards/Programs/ProgramsDashboard';
 import ChangePassword from './pages/ChangePassword';
-import AdminSecurity from './pages/AdminSecurity';
 import TestMap from './components/map/TestMap';
 
 function GeneralUserShell() {
@@ -191,7 +195,7 @@ export default function App() {
             path="/admin/patients"
             element={
               <ProtectedRoute>
-                <RoleGuard allowedRoles={['Admin', 'Receptionist', 'RecordsOfficer', 'Doctor', 'Nurse']}>
+                <RoleGuard allowedRoles={['Admin', 'Receptionist', 'RecordsOfficer', 'Doctor', 'Nurse', 'Midwife', 'Laboratory', 'Accounts']}>
                   <AppLayout>
                     <PatientRecords />
                   </AppLayout>
@@ -203,7 +207,7 @@ export default function App() {
             path="/admin/reports"
             element={
               <ProtectedRoute>
-                <RoleGuard allowedRoles={['Admin', 'RecordsOfficer', 'Doctor']}>
+                <RoleGuard allowedRoles={['Admin', 'RecordsOfficer', 'Doctor', 'Accounts', 'Midwife']}>
                   <AppLayout>
                     <Reports />
                   </AppLayout>
@@ -223,18 +227,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/admin/security"
-            element={
-              <ProtectedRoute>
-                <RoleGuard allowedRoles={['Admin']}>
-                  <AppLayout>
-                    <AdminSecurity />
-                  </AppLayout>
-                </RoleGuard>
-              </ProtectedRoute>
-            }
-          />
 
           <Route
             path="/staff"
@@ -243,6 +235,66 @@ export default function App() {
                 <RoleGuard allowedRoles={['Nurse', 'Receptionist']}>
                   <AppLayout>
                     <StaffPortal />
+                  </AppLayout>
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/opd"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowedRoles={['Admin', 'Doctor', 'Nurse', 'Receptionist', 'Midwife', 'RecordsOfficer']}>
+                  <AppLayout>
+                    <OpdDesk />
+                  </AppLayout>
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/accounts"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowedRoles={['Accounts', 'Admin']}>
+                  <AppLayout>
+                    <AccountsDashboard />
+                  </AppLayout>
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/midwife"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowedRoles={['Midwife', 'Admin', 'Doctor', 'Nurse']}>
+                  <AppLayout>
+                    <MidwifeDashboard />
+                  </AppLayout>
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/lab"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowedRoles={['Laboratory', 'Admin', 'Doctor', 'Nurse', 'Midwife']}>
+                  <AppLayout>
+                    <LabDashboard />
+                  </AppLayout>
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/programs"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowedRoles={['Admin', 'Doctor', 'Nurse', 'Midwife']}>
+                  <AppLayout>
+                    <ProgramsDashboard />
                   </AppLayout>
                 </RoleGuard>
               </ProtectedRoute>

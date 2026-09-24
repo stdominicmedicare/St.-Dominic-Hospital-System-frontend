@@ -143,6 +143,35 @@ export default function AdminHome() {
       iconBg: 'bg-icon-indigo',
       iconColor: 'text-indigo-600',
     },
+    {
+      label: 'OPD Today',
+      value: formatNum(s.opdToday),
+      icon: Stethoscope,
+      iconBg: 'bg-icon-teal',
+      iconColor: 'text-primary',
+    },
+    {
+      label: 'Open Invoices',
+      value: formatNum(s.openInvoices),
+      icon: Calendar,
+      iconBg: 'bg-icon-orange',
+      iconColor: 'text-orange-600',
+    },
+    {
+      label: 'Pending Lab',
+      value: formatNum(s.pendingLabOrders),
+      icon: Pill,
+      iconBg: 'bg-icon-blue',
+      iconColor: 'text-blue-600',
+    },
+    {
+      label: 'In Labour',
+      value: formatNum(s.inLabour),
+      sub: `Deliveries MTD: ${formatNum(s.deliveriesThisMonth)}`,
+      icon: Heart,
+      iconBg: 'bg-icon-pink',
+      iconColor: 'text-pink-600',
+    },
   ];
 
   return (
