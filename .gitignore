@@ -50,4 +50,6 @@ __pycache__/
 *.pyc
 
 # PWA / workbox generated noise in source tree (keep public/; ignore accidental caches)
-dev-dist/
+playwright-report/
+test-results/
+blob-report/

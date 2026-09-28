@@ -22,6 +22,10 @@ function getPortalTitle(role, pathname) {
   if (role === 'Pharmacy') return 'Pharmacy Management Panel';
   if (role === 'BloodBank' || role === 'Blood Bank') return 'Blood Bank Management Dashboard';
   if (role === 'Volunteer') return 'Blood Donation Volunteer';
+  if (role === 'Midwife') return 'Midwife / MCH';
+  if (role === 'Laboratory') return 'Laboratory';
+  if (role === 'Accounts') return 'Accounts / Billing';
+  if (role === 'Nurse' || role === 'Receptionist') return 'Clinical Staff';
   return null;
 }
 
@@ -98,12 +102,12 @@ export default function Header({ onMenuClick }) {
                   <span className="hidden sm:inline">{portalTitle}</span>
                 </span>
                 <span className="hidden truncate text-xs leading-tight text-white/80 xs:block">
-                  St. Dominic Care
+                  MEMON COMMUNITY HOSPITAL
                 </span>
               </>
             ) : (
               <span className="truncate font-semibold text-white max-w-[50vw] sm:max-w-none">
-                St. Dominic Care
+                MEMON COMMUNITY HOSPITAL
               </span>
             )}
           </span>
@@ -152,11 +156,6 @@ export default function Header({ onMenuClick }) {
             <NavLink to="/admin/audit-logs" className={navLinkClass}>
               Audit Trail
             </NavLink>
-            {/* MFA / 2FA disabled:
-            <NavLink to="/admin/security" className={navLinkClass}>
-              Security (2FA)
-            </NavLink>
-            */}
           </>
         )}
         {role === 'RecordsOfficer' && (

@@ -1,9 +1,5 @@
 /**
- * Login page – email/password sign-in with role-based redirect.
- *
- * MFA / 2FA disabled for now (client request).
- * Previous Admin MFA challenge (TOTP / AAL2) is archived at:
- *   src/pages/_mfa_disabled/Login.withMfa.jsx
+ * Login page – email/password.
  */
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, useLocation, Link } from 'react-router-dom';
@@ -11,17 +7,13 @@ import { Mail, Lock, Building2 } from 'lucide-react';
 import { useAuthContext } from '../auth/AuthContext';
 import { ROLE_ROUTES } from '../utils/constants';
 import { Button, Input, Card } from '../components/common';
-import { usePlatformLoader } from '../context/LoaderContext';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // MFA disabled: const [mfaCode, setMfaCode] = useState('');
-  // MFA disabled: const [mfaFactorId, setMfaFactorId] = useState(null);
   const [pendingRedirect, setPendingRedirect] = useState(false);
   const [localError, setLocalError] = useState('');
-  const { signIn, profile, user, loading, error: authError, refreshProfile } = useAuthContext();
-  const { showLoader, hideLoader } = usePlatformLoader();
+  const { signIn, profile, user, loading, error: authError } = useAuthContext();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -37,29 +29,19 @@ export default function Login() {
       return;
     }
 
-    // MFA disabled: previously Admins were redirected to /admin/security until TOTP enrolled (AAL2).
     const path =
       profile?.role && ROLE_ROUTES[profile.role] ? ROLE_ROUTES[profile.role] : redirect;
     setPendingRedirect(false);
-    navigate(path);
+    navigate(path, { replace: true });
   }, [pendingRedirect, user, profile, loading, redirect, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLocalError('');
-    showLoader('login');
-    try {
-      const { error } = await signIn(email, password);
-      if (error) return;
-      await refreshProfile();
-      // MFA disabled: previously challenged verified TOTP factors or forced /admin/security enrollment.
-      setPendingRedirect(true);
-    } finally {
-      hideLoader();
-    }
+    const { error } = await signIn(email, password);
+    if (error) return;
+    setPendingRedirect(true);
   };
-
-  /* MFA / 2FA UI disabled — see src/pages/_mfa_disabled/Login.withMfa.jsx for handleMfa + TOTP form. */
 
   return (
     <div
@@ -74,7 +56,7 @@ export default function Login() {
             <Building2 className="h-10 w-10" />
           </div>
           <h1 className="text-xl font-bold text-text-primary sm:text-2xl">
-            St. Dominic Care
+            MEMON COMMUNITY HOSPITAL
           </h1>
           <p className="text-sm text-text-secondary mt-1">
             Sign in to access your dashboard
@@ -85,7 +67,7 @@ export default function Login() {
           <Input
             label="Email Address"
             type="email"
-            placeholder="admin@stdominiccare.com"
+            placeholder="admin@hospital.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             leftIcon={<Mail className="h-5 w-5 text-text-muted" />}

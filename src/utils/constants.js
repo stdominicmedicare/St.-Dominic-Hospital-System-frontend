@@ -12,6 +12,9 @@ export const ROLES = {
   Nurse: 'Nurse',
   Receptionist: 'Receptionist',
   RecordsOfficer: 'RecordsOfficer',
+  Midwife: 'Midwife',
+  Laboratory: 'Laboratory',
+  Accounts: 'Accounts',
 };
 
 export const ROLE_ROUTES = {
@@ -25,9 +28,12 @@ export const ROLE_ROUTES = {
   'Blood Bank': '/bloodbank',
   [ROLES.Volunteer]: '/volunteer',
   [ROLES.GeneralUser]: '/dashboard',
-  [ROLES.Nurse]: '/admin/patients',
-  [ROLES.Receptionist]: '/admin/patients',
+  [ROLES.Nurse]: '/staff',
+  [ROLES.Receptionist]: '/staff',
   [ROLES.RecordsOfficer]: '/admin/patients',
+  [ROLES.Midwife]: '/midwife',
+  [ROLES.Laboratory]: '/lab',
+  [ROLES.Accounts]: '/accounts',
 };
 
 /** Blood groups for donors/volunteers/blood bank. */
@@ -52,4 +58,7 @@ export const ROLE_LABELS = {
   [ROLES.Nurse]: 'Nurse',
   [ROLES.Receptionist]: 'Receptionist / Front Desk',
   [ROLES.RecordsOfficer]: 'Records Officer',
+  [ROLES.Midwife]: 'Midwife',
+  [ROLES.Laboratory]: 'Laboratory',
+  [ROLES.Accounts]: 'Accounts',
 };

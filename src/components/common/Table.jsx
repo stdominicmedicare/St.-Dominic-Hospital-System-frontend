@@ -23,8 +23,12 @@ export function TableBody({ children }) {
   return <tbody className="divide-y divide-border bg-surface">{children}</tbody>;
 }
 
-export function TableRow({ children, className = '' }) {
-  return <tr className={className}>{children}</tr>;
+export function TableRow({ children, className = '', ...props }) {
+  return (
+    <tr className={className} {...props}>
+      {children}
+    </tr>
+  );
 }
 
 export function Th({ children, className = '' }) {

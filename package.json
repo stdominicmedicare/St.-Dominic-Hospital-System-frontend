@@ -7,7 +7,12 @@
     "dev": "vite",
     "build": "npm run generate-pwa-icons && vite build",
     "preview": "vite preview",
-    "generate-pwa-icons": "node scripts/generate-pwa-icons.js"
+    "generate-pwa-icons": "node scripts/generate-pwa-icons.js",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
+    "test:walkthrough": "PLAYWRIGHT_SLOW_MO=400 playwright test e2e/manual-walkthrough.spec.js --headed",
+    "test:walkthrough:headless": "playwright test e2e/manual-walkthrough.spec.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
@@ -20,6 +25,7 @@
     "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",

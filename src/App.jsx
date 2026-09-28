@@ -4,7 +4,6 @@
  */
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
-import { LoaderProvider } from './context/LoaderContext';
 import ProtectedRoute from './routes/ProtectedRoute';
 import RoleGuard from './routes/RoleGuard';
 import { AppLayout } from './components/layout';
@@ -20,10 +19,12 @@ import { PharmacyDashboard } from './dashboards/Pharmacy';
 import { BloodBankDashboard } from './dashboards/BloodBank';
 import { VolunteerDashboard } from './dashboards/Volunteer';
 import StaffPortal from './dashboards/Staff/StaffPortal';
+import OpdDesk from './dashboards/Opd/OpdDesk';
+import AccountsDashboard from './dashboards/Accounts/AccountsDashboard';
+import MidwifeDashboard from './dashboards/Midwife/MidwifeDashboard';
+import LabDashboard from './dashboards/Lab/LabDashboard';
+import ProgramsDashboard from './dashboards/Programs/ProgramsDashboard';
 import ChangePassword from './pages/ChangePassword';
-// MFA / 2FA disabled for now (client request). Re-enable: uncomment import + /admin/security route below.
-// import AdminSecurity from './pages/AdminSecurity';
-// Or restore from: src/pages/_mfa_disabled/AdminSecurity.jsx
 import TestMap from './components/map/TestMap';
 
 function GeneralUserShell() {
@@ -38,14 +39,13 @@ function GeneralUserShell() {
 export default function App() {
   return (
     <AuthProvider>
-      <LoaderProvider>
-        <BrowserRouter
-          future={{
-            v7_startTransition: true,
-            v7_relativeSplatPath: true,
-          }}
-        >
-          <Routes>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
+        <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
@@ -195,7 +195,7 @@ export default function App() {
             path="/admin/patients"
             element={
               <ProtectedRoute>
-                <RoleGuard allowedRoles={['Admin', 'Receptionist', 'RecordsOfficer', 'Doctor', 'Nurse']}>
+                <RoleGuard allowedRoles={['Admin', 'Receptionist', 'RecordsOfficer', 'Doctor', 'Nurse', 'Midwife', 'Laboratory', 'Accounts']}>
                   <AppLayout>
                     <PatientRecords />
                   </AppLayout>
@@ -207,7 +207,7 @@ export default function App() {
             path="/admin/reports"
             element={
               <ProtectedRoute>
-                <RoleGuard allowedRoles={['Admin', 'RecordsOfficer', 'Doctor']}>
+                <RoleGuard allowedRoles={['Admin', 'RecordsOfficer', 'Doctor', 'Accounts', 'Midwife']}>
                   <AppLayout>
                     <Reports />
                   </AppLayout>
@@ -227,20 +227,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          {/* MFA / 2FA disabled for now (client request). Uncomment to restore Admin authenticator setup.
-          <Route
-            path="/admin/security"
-            element={
-              <ProtectedRoute>
-                <RoleGuard allowedRoles={['Admin']}>
-                  <AppLayout>
-                    <AdminSecurity />
-                  </AppLayout>
-                </RoleGuard>
-              </ProtectedRoute>
-            }
-          />
-          */}
+
           <Route
             path="/staff"
             element={
@@ -248,6 +235,66 @@ export default function App() {
                 <RoleGuard allowedRoles={['Nurse', 'Receptionist']}>
                   <AppLayout>
                     <StaffPortal />
+                  </AppLayout>
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/opd"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowedRoles={['Admin', 'Doctor', 'Nurse', 'Receptionist', 'Midwife', 'RecordsOfficer']}>
+                  <AppLayout>
+                    <OpdDesk />
+                  </AppLayout>
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/accounts"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowedRoles={['Accounts', 'Admin']}>
+                  <AppLayout>
+                    <AccountsDashboard />
+                  </AppLayout>
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/midwife"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowedRoles={['Midwife', 'Admin', 'Doctor', 'Nurse']}>
+                  <AppLayout>
+                    <MidwifeDashboard />
+                  </AppLayout>
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/lab"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowedRoles={['Laboratory', 'Admin', 'Doctor', 'Nurse', 'Midwife']}>
+                  <AppLayout>
+                    <LabDashboard />
+                  </AppLayout>
+                </RoleGuard>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/programs"
+            element={
+              <ProtectedRoute>
+                <RoleGuard allowedRoles={['Admin', 'Doctor', 'Nurse', 'Midwife']}>
+                  <AppLayout>
+                    <ProgramsDashboard />
                   </AppLayout>
                 </RoleGuard>
               </ProtectedRoute>
@@ -390,8 +437,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        </BrowserRouter>
-      </LoaderProvider>
+      </BrowserRouter>
     </AuthProvider>
   );
 }

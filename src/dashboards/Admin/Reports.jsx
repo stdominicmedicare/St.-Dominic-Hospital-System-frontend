@@ -1,6 +1,6 @@
 /**
  * Admin / RecordsOfficer – Reports & Export (Excel + PDF).
- * Revenue reports omitted: billing not in scope.
+ * Includes census, visits, revenue, ANC, deliveries, immunization, HIV cascade.
  */
 import { useEffect, useState } from 'react';
 import { Card, Button, Input, Select, Toast, Table, TableHead, TableBody, TableRow, Th, Td } from '../../components/common';
