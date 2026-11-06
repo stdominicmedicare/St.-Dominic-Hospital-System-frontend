@@ -1,8 +1,9 @@
 /**
  * Design system: Toast. Fixed bottom-center; auto-dismiss; success/error variants.
  */
-export default function Toast({ message, type = 'success', visible, onDismiss }) {
-  if (!visible || !message) return null;
+export default function Toast({ message, type = 'success', visible, show, onDismiss }) {
+  const open = visible ?? show;
+  if (!open || !message) return null;
   const isError = type === 'error';
   return (
     <div

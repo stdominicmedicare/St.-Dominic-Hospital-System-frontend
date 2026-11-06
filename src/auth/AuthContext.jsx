@@ -10,7 +10,8 @@ export function AuthProvider({ children }) {
   useIdleLogout({
     enabled: !!auth.user,
     onIdle: () => {
-      auth.signOut();
+      // Phase 5: 15-minute idle auto-logout (HTML screen 15)
+      auth.signOut('idle');
     },
   });
 

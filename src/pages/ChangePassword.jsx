@@ -1,19 +1,23 @@
 /**
- * Force password change when password_expired is set by /api/auth/me.
+ * Force password change when password_expired or require_password_change is set by /api/auth/me.
  */
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Lock, Building2 } from 'lucide-react';
 import { useAuthContext } from '../auth/AuthContext';
 import { apiPost } from '../services/api';
 import { validatePassword, PASSWORD_HINT } from '../utils/passwordPolicy';
+import { ROLE_ROUTES } from '../utils/constants';
 import { Button, Input, Card } from '../components/common';
 
 export default function ChangePassword() {
-  const { refreshProfile, signOut } = useAuthContext();
+  const { refreshProfile, signOut, profile } = useAuthContext();
+  const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const firstLogin = Boolean(profile?.require_password_change);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,6 +35,8 @@ export default function ChangePassword() {
     try {
       await apiPost('/api/auth/change-password', { password });
       await refreshProfile();
+      const path = ROLE_ROUTES[profile?.role] || '/hms';
+      navigate(path, { replace: true });
     } catch (err) {
       setError(err.message || 'Failed to update password');
     } finally {
@@ -50,9 +56,13 @@ export default function ChangePassword() {
           <div className="rounded-full bg-primary p-4 text-white mb-4">
             <Building2 className="h-10 w-10" />
           </div>
-          <h1 className="text-xl font-bold text-text-primary">Password expired</h1>
+          <h1 className="text-xl font-bold text-text-primary">
+            {firstLogin ? 'Set your password' : 'Password expired'}
+          </h1>
           <p className="text-sm text-text-secondary mt-1">
-            Passwords expire every 90 days. Set a new password to continue.
+            {firstLogin
+              ? 'Change your temporary password before using the system (first login).'
+              : 'Passwords expire every 90 days. Set a new password to continue.'}
           </p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">

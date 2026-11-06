@@ -13,7 +13,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [pendingRedirect, setPendingRedirect] = useState(false);
   const [localError, setLocalError] = useState('');
-  const { signIn, profile, user, loading, error: authError } = useAuthContext();
+  const { signIn, profile, user, loading, error: authError, profileError } = useAuthContext();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -23,17 +23,25 @@ export default function Login() {
   useEffect(() => {
     if (!pendingRedirect || !user || loading) return;
 
-    if (profile?.password_expired) {
+    if (profileError && !profile?.role) {
+      setPendingRedirect(false);
+      setLocalError(profileError || 'Signed in, but profile could not be loaded. Is the backend running on :5000?');
+      return;
+    }
+
+    // Wait for profile so we route by role (Admin → /admin) instead of bouncing to `/`.
+    if (!profile?.role) return;
+
+    if (profile.password_expired || profile.require_password_change) {
       setPendingRedirect(false);
       navigate('/change-password', { replace: true });
       return;
     }
 
-    const path =
-      profile?.role && ROLE_ROUTES[profile.role] ? ROLE_ROUTES[profile.role] : redirect;
+    const path = ROLE_ROUTES[profile.role] || redirect;
     setPendingRedirect(false);
     navigate(path, { replace: true });
-  }, [pendingRedirect, user, profile, loading, redirect, navigate]);
+  }, [pendingRedirect, user, profile, profileError, loading, redirect, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -66,13 +74,17 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
             label="Email Address"
-            type="email"
+            type="text"
+            inputMode="email"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             placeholder="admin@hospital.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             leftIcon={<Mail className="h-5 w-5 text-text-muted" />}
             required
-            autoComplete="email"
+            autoComplete="username"
           />
           <Input
             label="Password"

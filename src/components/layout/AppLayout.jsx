@@ -1,5 +1,5 @@
 /**
- * Base layout: Header (dark teal), Sidebar, main, Footer, MobileNav.
+ * Base layout: Header, department Sidebar, main, Footer, MobileNav.
  */
 import { useState } from 'react';
 import Header from './Header';
@@ -11,7 +11,7 @@ export default function AppLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen min-w-0 flex-col overflow-x-hidden bg-background-light">
+    <div className="flex min-h-screen min-w-0 flex-col overflow-x-hidden bg-[#F2FAF7]">
       <Header onMenuClick={() => setSidebarOpen(true)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex min-w-0 flex-1">
