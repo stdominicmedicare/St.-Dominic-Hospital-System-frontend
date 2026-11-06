@@ -31,6 +31,13 @@ import { useDoctorTracking } from '../../features/doctor/hooks/useDoctorTracking
 import TransferTrackingPreview from '../../features/doctor/components/TransferTrackingPreview';
 import { Users, Calendar, FileText, Pill, Ambulance, User as UserIcon, Send, Eye, Droplets, MapPin, History, Clock } from 'lucide-react';
 
+/** Shared patient label — MRN (Patient ID) + name from unified profiles model. */
+function patientLabel(patient) {
+  if (!patient) return 'Patient';
+  const name = patient.full_name || patient.email || 'Patient';
+  return patient.mrn ? `${patient.mrn} · ${name}` : name;
+}
+
 function formatDate(iso) {
   if (!iso) return '–';
   return new Date(iso).toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -238,7 +245,10 @@ export default function DoctorDashboard() {
     { id: 'ambulance', label: 'ICU / Ambulance', icon: Ambulance },
   ];
 
-  const patientOptions = patients.map((p) => ({ value: p.id, label: `${p.full_name || p.email} (${p.email})` }));
+  const patientOptions = patients.map((p) => ({
+    value: p.id,
+    label: p.mrn ? `${p.mrn} · ${p.full_name || p.email || 'Patient'}` : `${p.full_name || p.email || 'Patient'}`,
+  }));
 
   return (
     <div className="space-y-4 md:space-y-6">
@@ -284,7 +294,7 @@ export default function DoctorDashboard() {
                               <UserIcon className="h-5 w-5 text-text-muted" />
                             </span>
                             <div>
-                              <p className="font-medium text-text-primary">{patient.full_name || patient.email || 'Patient'}</p>
+                              <p className="font-medium text-text-primary">{patientLabel(patient)}</p>
                               <p className="text-sm text-text-muted">
                                 {formatDate(apt.scheduled_at)} · {formatTime(apt.scheduled_at)}
                               </p>
@@ -324,7 +334,7 @@ export default function DoctorDashboard() {
                                 <UserIcon className="h-5 w-5 text-text-muted" />
                               </span>
                               <div>
-                                <p className="font-medium text-text-primary">{patient.full_name || patient.email || 'Patient'}</p>
+                                <p className="font-medium text-text-primary">{patientLabel(patient)}</p>
                                 <p className="text-sm text-text-muted">
                                   {formatTime(apt.scheduled_at)}
                                 </p>
@@ -365,7 +375,7 @@ export default function DoctorDashboard() {
                                 <UserIcon className="h-5 w-5 text-text-muted" />
                               </span>
                               <div>
-                                <p className="font-medium text-text-primary">{patient.full_name || patient.email || 'Patient'}</p>
+                                <p className="font-medium text-text-primary">{patientLabel(patient)}</p>
                                 <p className="text-sm text-text-muted">
                                   {formatDateTime(apt.scheduled_at)}
                                 </p>
@@ -403,7 +413,7 @@ export default function DoctorDashboard() {
                       {(p.full_name || p.email || 'P').charAt(0).toUpperCase()}
                     </span>
                     <div className="min-w-0">
-                      <p className="font-medium text-text-primary">{p.full_name || '–'}</p>
+                      <p className="font-medium text-text-primary">{patientLabel(p)}</p>
                       <p className="truncate text-sm text-text-secondary">{p.email}</p>
                     </div>
                   </Card>
@@ -464,7 +474,7 @@ export default function DoctorDashboard() {
                         </span>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-text-primary">{activity.title}</p>
-                          <p className="text-sm text-text-secondary">{patient.full_name || patient.email || 'Patient'}</p>
+                          <p className="text-sm text-text-secondary">{patientLabel(patient)}</p>
                           <p className="text-xs text-text-muted flex items-center gap-1 mt-1">
                             <Clock className="h-3 w-3" />
                             {formatDateTime(activity.date)}
@@ -516,7 +526,7 @@ export default function DoctorDashboard() {
                               <FileText className="h-5 w-5 text-text-muted" />
                             </span>
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-text-primary">{patient.full_name || patient.email || 'Patient'}</p>
+                              <p className="font-medium text-text-primary">{patientLabel(patient)}</p>
                               <p className="text-sm text-text-muted flex items-center gap-2 mt-1">
                                 <Clock className="h-3 w-3" />
                                 {formatDateTime(record.created_at)}
@@ -587,7 +597,7 @@ export default function DoctorDashboard() {
                               <Pill className="h-5 w-5 text-text-muted" />
                             </span>
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-text-primary">{patient.full_name || patient.email || 'Patient'}</p>
+                              <p className="font-medium text-text-primary">{patientLabel(patient)}</p>
                               <p className="text-sm text-text-muted flex items-center gap-2 mt-1">
                                 <Clock className="h-3 w-3" />
                                 {formatDateTime(prescription.created_at)}
@@ -736,7 +746,7 @@ export default function DoctorDashboard() {
                             <Droplets className="h-5 w-5 text-text-muted" />
                           </span>
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-text-primary">{patient.full_name || patient.email || 'Patient'}</p>
+                            <p className="font-medium text-text-primary">{patientLabel(patient)}</p>
                             <p className="text-sm text-text-muted flex items-center gap-2 mt-1">
                               <Clock className="h-3 w-3" />
                               {formatDateTime(request.created_at || request.requested_at)}

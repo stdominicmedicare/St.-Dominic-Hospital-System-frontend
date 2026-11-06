@@ -1,8 +1,11 @@
 /**
  * Signs the user out after IDLE_TIMEOUT_MS of no mouse/keyboard/touch activity.
+ * Spec (screen 15): auto log-out when idle = 15 minutes.
  */
 import { useEffect, useRef } from 'react';
 import { IDLE_TIMEOUT_MS } from '../utils/passwordPolicy';
+
+export { IDLE_TIMEOUT_MS };
 
 const ACTIVITY_EVENTS = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'];
 

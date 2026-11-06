@@ -24,8 +24,11 @@ function loadEnvFile(filePath) {
   }
 }
 
+// Prefer workspace backend/.env (Memon layout); keep legacy path as fallback.
+loadEnvFile(path.resolve(__dirname, '../../../backend/.env'));
 loadEnvFile(path.resolve(__dirname, '../../../Memon-HMS-Backend/.env'));
 loadEnvFile(path.resolve(__dirname, '../../.env'));
+loadEnvFile(path.resolve(__dirname, '../../../frontend/.env'));
 
 export const API_URL = (
   process.env.PLAYWRIGHT_API_URL ||
@@ -39,6 +42,10 @@ export const SUPABASE_ANON = process.env.SUPABASE_ANON_KEY || process.env.VITE_S
 export const ADMIN_EMAIL = process.env.QA_ADMIN_EMAIL || 'admin@memon1.local';
 export const ADMIN_PASS = process.env.QA_ADMIN_PASSWORD || 'Medicare@123@#';
 
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
 export async function supabaseLogin(email = ADMIN_EMAIL, password = ADMIN_PASS) {
   if (!SUPABASE_URL || !SUPABASE_ANON) {
     throw new Error('Missing SUPABASE_URL / SUPABASE_ANON_KEY for Playwright auth');
@@ -46,13 +53,24 @@ export async function supabaseLogin(email = ADMIN_EMAIL, password = ADMIN_PASS) 
   const client = createClient(SUPABASE_URL, SUPABASE_ANON, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
-  const { data, error } = await client.auth.signInWithPassword({ email, password });
-  if (error) throw new Error(`Login failed: ${error.message}`);
-  return {
-    accessToken: data.session.access_token,
-    user: data.user,
-    client,
-  };
+  let lastErr;
+  for (let attempt = 1; attempt <= 6; attempt++) {
+    const { data, error } = await client.auth.signInWithPassword({ email, password });
+    if (!error) {
+      return {
+        accessToken: data.session.access_token,
+        user: data.user,
+        client,
+      };
+    }
+    lastErr = error;
+    if (/rate limit/i.test(error.message) && attempt < 6) {
+      await sleep(5000 * attempt);
+      continue;
+    }
+    break;
+  }
+  throw new Error(`Login failed: ${lastErr?.message || 'unknown'}`);
 }
 
 export function authHeaders(token) {

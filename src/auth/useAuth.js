@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../services/supabase';
-import { apiGet } from '../services/api';
+import { apiGet, apiPost } from '../services/api';
 import { ROLE_ROUTES } from '../utils/constants';
 
 /** Profile fetch timeout (ms). Prevents auth bootstrap from hanging. */
@@ -172,12 +172,18 @@ export function useAuth() {
             break;
 
           case 'SIGNED_IN':
-            // Only handle SIGNED_IN if not already initialized
-            // This prevents duplicate handling when multiple SIGNED_IN events fire
-            if (session?.user && !sessionInitializedRef.current) {
-              applySession(session);
-            } else if (session?.user && sessionInitializedRef.current) {
-              console.log('[useAuth] Ignoring duplicate SIGNED_IN event');
+            // Always apply on sign-in. Bootstrap may have already marked the session
+            // as initialized while logged out; ignoring this left Login stuck with user=null.
+            if (session?.user) {
+              const sameUserAlreadyLoaded =
+                sessionInitializedRef.current &&
+                currentUserIdRef.current === session.user.id;
+              if (sameUserAlreadyLoaded) {
+                console.log('[useAuth] SIGNED_IN for current user — keeping session');
+                setUser(session.user);
+              } else {
+                applySession(session);
+              }
             }
             break;
 
@@ -226,49 +232,90 @@ export function useAuth() {
   const signIn = useCallback(async (email, password) => {
     setError(null);
     console.log('[useAuth] Signing in...');
-    
+
     try {
+      // Phase 5: pre-check lockout / suspend before Supabase password auth
+      try {
+        await apiPost('/api/auth/check-lock', { email });
+      } catch (lockErr) {
+        const msg = lockErr?.message || 'Account locked or suspended';
+        const code = lockErr?.data?.code;
+        setError(msg);
+        return { error: msg, code };
+      }
+
       const { data, error: e } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      
+
       if (e) {
         console.error('[useAuth] Sign in failed:', e.message);
-        
-        // Provide more helpful error messages
+
+        // Record failed attempt for lockout + audit (best-effort)
+        try {
+          await apiPost('/api/auth/failed-login', {
+            email,
+            reason: e.message || 'Invalid login credentials',
+          });
+        } catch (failErr) {
+          if (failErr?.data?.code === 'ACCOUNT_LOCKED') {
+            const msg = failErr.message || 'Account locked after failed logins';
+            setError(msg);
+            return { error: msg, code: 'ACCOUNT_LOCKED' };
+          }
+        }
+
         let errorMessage = e.message;
         if (e.message.includes('Failed to fetch') || e.message.includes('ERR_NAME_NOT_RESOLVED')) {
           errorMessage = 'Cannot connect to Supabase. Please check your Supabase URL in .env file. The project might not exist or the URL is incorrect.';
         } else if (e.message.includes('Invalid login credentials')) {
           errorMessage = 'Invalid email or password. Please check your credentials.';
         }
-        
+
         setError(errorMessage);
         return { error: errorMessage };
       }
-      
+
       console.log('[useAuth] Sign in successful');
+      if (data?.session?.user && mountedRef.current) {
+        setUser(data.session.user);
+        setSessionLoading(false);
+        sessionInitializedRef.current = true;
+        setProfileFromUser(data.session.user.id);
+      }
+
+      // Reset lockout counters + audit login (authenticated)
+      try {
+        await apiPost('/api/auth/login-success', {});
+      } catch (auditErr) {
+        console.warn('[useAuth] login-success audit failed:', auditErr?.message);
+      }
+
       return { data };
     } catch (err) {
       console.error('[useAuth] Sign in error:', err);
-      
-      // Handle network errors
+
       let errorMessage = err.message;
       if (err.message.includes('Failed to fetch') || err.message.includes('ERR_NAME_NOT_RESOLVED')) {
         errorMessage = 'Network error: Cannot connect to Supabase. Please verify your Supabase project URL in the .env file.';
       }
-      
+
       setError(errorMessage);
       return { error: errorMessage };
     }
-  }, []);
+  }, [setProfileFromUser]);
 
-  const signOut = useCallback(async () => {
+  const signOut = useCallback(async (reason = 'manual') => {
     setError(null);
-    console.log('[useAuth] Signing out...');
-    
+    console.log('[useAuth] Signing out...', reason);
+
     try {
+      try {
+        await apiPost('/api/auth/logout', { reason });
+      } catch {
+        /* best-effort audit */
+      }
       await supabase.auth.signOut();
       console.log('[useAuth] Sign out successful');
     } catch (err) {

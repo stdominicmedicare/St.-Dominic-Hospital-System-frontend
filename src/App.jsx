@@ -26,6 +26,37 @@ import LabDashboard from './dashboards/Lab/LabDashboard';
 import ProgramsDashboard from './dashboards/Programs/ProgramsDashboard';
 import ChangePassword from './pages/ChangePassword';
 import TestMap from './components/map/TestMap';
+import PortalGuard from './routes/PortalGuard';
+import HomeDashboard from './pages/hms/HomeDashboard';
+import PortalPlaceholder from './pages/hms/PortalPlaceholder';
+import PatientsPortal from './pages/hms/PatientsPortal';
+import OpdPortal from './pages/hms/OpdPortal';
+import AppointmentsPortal from './pages/hms/AppointmentsPortal';
+import LabPortal from './pages/hms/LabPortal';
+import PharmacyPortal from './pages/hms/PharmacyPortal';
+import BillingPortal from './pages/hms/BillingPortal';
+import AncPortal from './pages/hms/AncPortal';
+import MaternityPortal from './pages/hms/MaternityPortal';
+import PncPortal from './pages/hms/PncPortal';
+import ImmunizationPortal from './pages/hms/ImmunizationPortal';
+import FpPortal from './pages/hms/FpPortal';
+import HivPortal from './pages/hms/HivPortal';
+import ReportsPortal from './pages/hms/ReportsPortal';
+import RolesPortal from './pages/hms/RolesPortal';
+import SecurityPortal from './pages/hms/SecurityPortal';
+
+const HMS_STAFF_ROLES = [
+  'Admin',
+  'Doctor',
+  'Nurse',
+  'Clerk',
+  'Receptionist',
+  'RecordsOfficer',
+  'Midwife',
+  'Laboratory',
+  'Pharmacy',
+  'Accounts',
+];
 
 function GeneralUserShell() {
   return (
@@ -33,6 +64,45 @@ function GeneralUserShell() {
       <h1 className="text-2xl font-bold text-text-primary">Dashboard</h1>
       <p className="text-text-secondary">General user – Phase 1.</p>
     </div>
+  );
+}
+
+function HmsPortal({ portal, title, purpose, screen, steps, currentStep }) {
+  let body = (
+    <PortalPlaceholder
+      portal={portal}
+      title={title}
+      purpose={purpose}
+      screen={screen}
+      steps={steps}
+      currentStep={currentStep}
+    />
+  );
+  if (portal === 'home') body = <HomeDashboard />;
+  else if (portal === 'patients') body = <PatientsPortal />;
+  else if (portal === 'opd') body = <OpdPortal />;
+  else if (portal === 'appointments') body = <AppointmentsPortal />;
+  else if (portal === 'lab') body = <LabPortal />;
+  else if (portal === 'pharmacy') body = <PharmacyPortal />;
+  else if (portal === 'billing') body = <BillingPortal />;
+  else if (portal === 'anc') body = <AncPortal />;
+  else if (portal === 'maternity') body = <MaternityPortal />;
+  else if (portal === 'pnc') body = <PncPortal />;
+  else if (portal === 'immunization') body = <ImmunizationPortal />;
+  else if (portal === 'fp') body = <FpPortal />;
+  else if (portal === 'hiv') body = <HivPortal />;
+  else if (portal === 'reports') body = <ReportsPortal />;
+  else if (portal === 'roles') body = <RolesPortal />;
+  else if (portal === 'security') body = <SecurityPortal />;
+
+  return (
+    <ProtectedRoute>
+      <RoleGuard allowedRoles={HMS_STAFF_ROLES}>
+        <PortalGuard portal={portal}>
+          <AppLayout>{body}</AppLayout>
+        </PortalGuard>
+      </RoleGuard>
+    </ProtectedRoute>
   );
 }
 
@@ -195,7 +265,7 @@ export default function App() {
             path="/admin/patients"
             element={
               <ProtectedRoute>
-                <RoleGuard allowedRoles={['Admin', 'Receptionist', 'RecordsOfficer', 'Doctor', 'Nurse', 'Midwife', 'Laboratory', 'Accounts']}>
+                <RoleGuard allowedRoles={['Admin', 'Clerk', 'Receptionist', 'RecordsOfficer', 'Doctor', 'Nurse', 'Midwife', 'Laboratory', 'Accounts']}>
                   <AppLayout>
                     <PatientRecords />
                   </AppLayout>
@@ -207,7 +277,7 @@ export default function App() {
             path="/admin/reports"
             element={
               <ProtectedRoute>
-                <RoleGuard allowedRoles={['Admin', 'RecordsOfficer', 'Doctor', 'Accounts', 'Midwife']}>
+                <RoleGuard allowedRoles={['Admin', 'Clerk', 'RecordsOfficer', 'Doctor', 'Accounts', 'Midwife']}>
                   <AppLayout>
                     <Reports />
                   </AppLayout>
@@ -219,7 +289,7 @@ export default function App() {
             path="/admin/audit-logs"
             element={
               <ProtectedRoute>
-                <RoleGuard allowedRoles={['Admin', 'RecordsOfficer']}>
+                <RoleGuard allowedRoles={['Admin', 'Clerk', 'RecordsOfficer']}>
                   <AppLayout>
                     <AuditLogs />
                   </AppLayout>
@@ -232,7 +302,7 @@ export default function App() {
             path="/staff"
             element={
               <ProtectedRoute>
-                <RoleGuard allowedRoles={['Nurse', 'Receptionist']}>
+                <RoleGuard allowedRoles={['Nurse', 'Clerk', 'Receptionist']}>
                   <AppLayout>
                     <StaffPortal />
                   </AppLayout>
@@ -244,7 +314,7 @@ export default function App() {
             path="/opd"
             element={
               <ProtectedRoute>
-                <RoleGuard allowedRoles={['Admin', 'Doctor', 'Nurse', 'Receptionist', 'Midwife', 'RecordsOfficer']}>
+                <RoleGuard allowedRoles={['Admin', 'Doctor', 'Nurse', 'Clerk', 'Receptionist', 'Midwife', 'RecordsOfficer']}>
                   <AppLayout>
                     <OpdDesk />
                   </AppLayout>
@@ -433,6 +503,24 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* St Dominic HMS screens 00–15 (Phase 0 placeholders) */}
+          <Route path="/hms" element={<HmsPortal portal="home" title="Home dashboard" purpose="Department activity and portal launcher." screen="00" />} />
+          <Route path="/hms/patients" element={<HmsPortal portal="patients" title="Patient registration & records" purpose="Register every patient once; one shared MRN across portals." screen="13" steps={['Search', 'Register / open', 'Print card']} />} />
+          <Route path="/hms/opd" element={<HmsPortal portal="opd" title="OPD (Outpatient)" purpose="Manage every outpatient visit from arrival to exit." screen="01" steps={['Arrive', 'Triage', 'Consult', 'Exit']} currentStep={0} />} />
+          <Route path="/hms/appointments" element={<HmsPortal portal="appointments" title="Appointments & follow-up" purpose="Book, reschedule and track appointments for every clinic." screen="02" steps={['Booked', 'Arrived', 'Seen', 'Missed']} />} />
+          <Route path="/hms/lab" element={<HmsPortal portal="lab" title="Laboratory" purpose="Receive test requests, collect samples, enter and verify results." screen="03" steps={['Requested', 'Collected', 'In progress', 'Verified']} />} />
+          <Route path="/hms/pharmacy" element={<HmsPortal portal="pharmacy" title="Pharmacy & medicine inventory" purpose="Dispense prescriptions and keep stock accurate." screen="04" steps={['Prescribed', 'Ready', 'Dispensed']} />} />
+          <Route path="/hms/anc" element={<HmsPortal portal="anc" title="Antenatal care (ANC)" purpose="Register pregnancies and record each ANC contact." screen="05" steps={['Registered', 'ANC visits', 'Referred']} />} />
+          <Route path="/hms/maternity" element={<HmsPortal portal="maternity" title="Maternity & delivery" purpose="Track women in the labour ward and record deliveries." screen="06" steps={['Admitted', 'In labour', 'Delivered', 'PNC']} />} />
+          <Route path="/hms/pnc" element={<HmsPortal portal="pnc" title="Postnatal care (PNC)" purpose="Follow mother and baby after delivery." screen="07" steps={['48h', 'Day 3', 'Day 7–14', 'Week 6']} />} />
+          <Route path="/hms/immunization" element={<HmsPortal portal="immunization" title="Immunization" purpose="Record vaccines and show who is due or overdue." screen="08" steps={['Due', 'Given', 'Overdue']} currentStep={0} />} />
+          <Route path="/hms/fp" element={<HmsPortal portal="fp" title="Family planning" purpose="Counsel clients and record family planning methods." screen="09" steps={['Counselled', 'Method given', 'Re-supply']} />} />
+          <Route path="/hms/hiv" element={<HmsPortal portal="hiv" title="HIV care" purpose="HIV testing, ART enrolment and follow-up (requires HIV access flag)." screen="10" steps={['Tested', 'Enrolled', 'Follow-up']} />} />
+          <Route path="/hms/billing" element={<HmsPortal portal="billing" title="Billing & receipts" purpose="Collect payments for all services and print receipts." screen="11" steps={['Open', 'Partial', 'Paid']} currentStep={0} />} />
+          <Route path="/hms/reports" element={<HmsPortal portal="reports" title="Reports & statistics" purpose="Monthly and custom reports for management and government returns." screen="12" steps={['Filter', 'Run', 'Export']} />} />
+          <Route path="/hms/roles" element={<HmsPortal portal="roles" title="Users & roles" purpose="Six roles decide which portals each staff member can see and change." screen="14" steps={['Select user', 'Assign role', 'Set flags']} />} />
+          <Route path="/hms/security" element={<HmsPortal portal="security" title="Security, audit log & backups" purpose="Who did what and when; append-only audit; backup status." screen="15" steps={['Filter', 'Review', 'Export']} />} />
 
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />

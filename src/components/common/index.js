@@ -7,3 +7,9 @@ export { default as Table, TableHead, TableBody, TableRow, Th, Td } from './Tabl
 export { default as Select } from './Select';
 export { default as Toast } from './Toast';
 export { default as PlatformLoader, LOADER_EVENTS } from './PlatformLoader';
+export { default as KpiTile } from './KpiTile';
+export { default as StatusChip } from './StatusChip';
+export { default as WorkflowStepper } from './WorkflowStepper';
+export { default as PageHeader } from './PageHeader';
+export { default as ExportExcel } from './ExportExcel';
+export { default as ExportPDF } from './ExportPDF';
