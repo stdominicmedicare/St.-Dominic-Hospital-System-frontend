@@ -14,13 +14,16 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const backendEnv = path.resolve(__dirname, '../../Memon-HMS-Backend/.env');
-for (const line of fs.readFileSync(backendEnv, 'utf8').split('\n')) {
-  const m = line.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
-  if (!m) continue;
-  let v = m[2].trim();
-  if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
-  if (!process.env[m[1]]) process.env[m[1]] = v;
+for (const rel of ['../../backend/.env', '../../Memon-HMS-Backend/.env', '../.env']) {
+  const backendEnv = path.resolve(__dirname, rel);
+  if (!fs.existsSync(backendEnv)) continue;
+  for (const line of fs.readFileSync(backendEnv, 'utf8').split('\n')) {
+    const m = line.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
+    if (!m) continue;
+    let v = m[2].trim();
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+    if (!process.env[m[1]]) process.env[m[1]] = v;
+  }
 }
 
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;

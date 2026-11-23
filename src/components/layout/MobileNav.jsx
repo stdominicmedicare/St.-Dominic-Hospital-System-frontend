@@ -1,16 +1,35 @@
 /**
  * Mobile bottom nav – Lucide icons, touch-friendly, active state.
- * Kept to ≤4 items so labels fit on 320–375px phones; full routes stay in the drawer.
+ * Kept to ≤4 items; full routes stay in the drawer sidebar.
  */
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../../auth/AuthContext';
-import { LayoutDashboard, Users, Activity, History, Pill, Droplets, FolderOpen, BarChart3, FileText } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Users,
+  Activity,
+  History,
+  Pill,
+  Droplets,
+  FolderOpen,
+  BarChart3,
+  FileText,
+  ClipboardList,
+} from 'lucide-react';
+import { ROLE_ROUTES } from '../../utils/constants';
+
+const hmsStaffNav = [
+  { to: '/hms', label: 'Home', icon: LayoutDashboard },
+  { to: '/hms/patients', label: 'Patients', icon: FolderOpen },
+  { to: '/hms/opd', label: 'OPD', icon: ClipboardList },
+  { to: '/hms/reports', label: 'Reports', icon: BarChart3 },
+];
 
 const adminNav = [
-  { to: '/admin', label: 'Home', icon: LayoutDashboard },
-  { to: '/admin/patients', label: 'Patients', icon: FolderOpen },
-  { to: '/admin/reports', label: 'Reports', icon: BarChart3 },
-  { to: '/admin/users', label: 'Users', icon: Users },
+  { to: '/hms', label: 'Home', icon: LayoutDashboard },
+  { to: '/hms/patients', label: 'Patients', icon: FolderOpen },
+  { to: '/hms/reports', label: 'Reports', icon: BarChart3 },
+  { to: '/hms/roles', label: 'Users', icon: Users },
 ];
 
 const icuNav = [
@@ -20,36 +39,51 @@ const icuNav = [
   { to: '/icu/history', label: 'History', icon: History },
 ];
 
-function getHomePath(r) {
-  if (r === 'Patient') return '/patient';
-  if (r === 'Doctor') return '/doctor';
-  if (r === 'Ambulance') return '/ambulance';
-  if (r === 'ICU') return '/icu';
-  if (r === 'Pharmacy') return '/pharmacy';
-  if (r === 'BloodBank' || r === 'Blood Bank') return '/bloodbank';
-  if (r === 'Volunteer') return '/volunteer';
-  return '/';
-}
+const HMS_ROLES = new Set([
+  'Admin',
+  'Doctor',
+  'Nurse',
+  'Clerk',
+  'Receptionist',
+  'RecordsOfficer',
+  'Midwife',
+  'Laboratory',
+  'Pharmacy',
+  'Accounts',
+]);
 
 export default function MobileNav() {
   const { role } = useAuthContext();
   const location = useLocation();
 
-  const pharmacyNav = [{ to: '/pharmacy', label: 'Home', icon: Pill }];
-  const bloodBankNav = [{ to: '/bloodbank', label: 'Home', icon: Droplets }];
+  const pharmacyNav = [
+    { to: '/hms', label: 'Home', icon: LayoutDashboard },
+    { to: '/hms/pharmacy', label: 'Pharmacy', icon: Pill },
+  ];
+  const bloodBankNav = [
+    { to: '/bloodbank', label: 'Blood bank', icon: Droplets },
+  ];
   const volunteerNav = [{ to: '/volunteer', label: 'Home', icon: Droplets }];
-  const items =
-    role === 'Admin'
-      ? adminNav
-      : role === 'ICU'
-        ? icuNav
-        : role === 'Pharmacy'
-          ? pharmacyNav
-          : role === 'BloodBank' || role === 'Blood Bank'
-            ? bloodBankNav
-            : role === 'Volunteer'
-              ? volunteerNav
-              : [{ to: getHomePath(role), label: 'Home', icon: LayoutDashboard }];
+  const ambulanceNav = [
+    { to: '/ambulance', label: 'Ambulance', icon: Activity },
+  ];
+  const doctorNav = [
+    { to: '/hms', label: 'Home', icon: LayoutDashboard },
+    { to: '/doctor', label: 'Doctors', icon: Users },
+    { to: '/hms/patients', label: 'Patients', icon: FolderOpen },
+    { to: '/hms/opd', label: 'OPD', icon: ClipboardList },
+  ];
+
+  let items;
+  if (role === 'Admin') items = adminNav;
+  else if (role === 'Doctor') items = doctorNav;
+  else if (role === 'ICU') items = icuNav;
+  else if (role === 'Ambulance') items = ambulanceNav;
+  else if (role === 'Pharmacy') items = pharmacyNav;
+  else if (role === 'BloodBank' || role === 'Blood Bank') items = bloodBankNav;
+  else if (role === 'Volunteer') items = volunteerNav;
+  else if (HMS_ROLES.has(role)) items = hmsStaffNav;
+  else items = [{ to: ROLE_ROUTES[role] || '/', label: 'Home', icon: LayoutDashboard }];
 
   return (
     <nav
@@ -60,7 +94,7 @@ export default function MobileNav() {
       {items.map(({ to, label, icon: Icon }) => {
         const isActive =
           location.pathname === to ||
-          (to !== '/admin' && to !== '/icu' && location.pathname.startsWith(to));
+          (to !== '/hms' && to !== '/icu' && location.pathname.startsWith(to));
         return (
           <Link
             key={to}

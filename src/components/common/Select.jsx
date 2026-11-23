@@ -7,6 +7,7 @@ export default function Select({
   error,
   className = '',
   id,
+  children,
   ...props
 }) {
   const selectId = id || `select-${Math.random().toString(36).slice(2)}`;
@@ -40,6 +41,7 @@ export default function Select({
             </option>
           )
         )}
+        {children}
       </select>
       {error && <p className="mt-1 text-sm text-error">{error}</p>}
     </div>
